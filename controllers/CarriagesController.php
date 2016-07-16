@@ -15,11 +15,6 @@ use yii\web\Response as Response;
  */
 class CarriagesController extends Controller
 {
-    public function beforeAction($action)
-    {
-      $this->enableCsrfValidation = false;
-      return parent::beforeAction($action);
-    }
     /**
      * @inheritdoc
      */
