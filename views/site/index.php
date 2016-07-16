@@ -60,14 +60,14 @@ $this->title = 'Carriages';
         <tr ng-repeat='carriage in carriages'>
           <td>{{ carriage.carriage_number }}</td>
           <td>{{ carriage.carriage_kind | date:'yyyy'}}</td>
-          <td style="cursor: pointer" ng-click="change(carriage.carriage_number, carriage.carriage_owner)" ng-if="editCarriage !== carriage.carriage_number">{{ carriage.name }}</td>
+          <td style="cursor: pointer" ng-click="change(carriage)" ng-if="editCarriage !== carriage.carriage_number">{{ carriage.owner.name }}</td>
           <td style="cursor: pointer" ng-if="editCarriage == carriage.carriage_number">
-            <select class="form-control" ng-model="changeCarriageOwner" ng-change="updateCarriage(changeCarriageOwner)">
+            <select class="form-control" ng-model="changeCarriageOwner" ng-change="updateCarriage(changeCarriageOwner, carriage)">
               <option value="{{ owner.id }}" ng-repeat='owner in owners'>{{ owner.name }}</option>
             </select>
           </td>
           <td>
-            <button type="button" class='btn btn-danger' ng-click="removeCarriage(carriage.carriage_number)">Удалить</button>
+            <button type="button" class='btn btn-danger' ng-click="removeCarriage(carriage)">Удалить</button>
             <!-- <button type="button" class='btn btn-info' ng-click="removeCarriage(carriage.carriage_number)">Изменить владельца</button> -->
           </td>
         </tr>

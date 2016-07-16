@@ -46,4 +46,9 @@ class CarriageModel extends \yii\db\ActiveRecord
             'carriage_owner' => 'Carriage Owner',
         ];
     }
+
+    public function getOwner()
+    {
+      return $this->hasOne(OwnerModel::className(), ['id' => 'carriage_owner']);
+    }
 }

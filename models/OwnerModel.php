@@ -26,7 +26,7 @@ class OwnerModel extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'integer'],
+            [['name'], 'string'],
         ];
     }
 
@@ -39,5 +39,10 @@ class OwnerModel extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
         ];
+    }
+
+    public function getCarriage()
+    {
+      return $this->hasMany(CarriageModel::className(), ['id'  => 'carriage_owner']);
     }
 }

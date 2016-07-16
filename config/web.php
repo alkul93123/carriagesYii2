@@ -8,6 +8,9 @@ $config = [
     'bootstrap' => ['log'],
     'components' => [
         'request' => [
+            // 'parsers' => [
+            //     'application/json' => 'yii\web\JsonParser',
+            // ],
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'asdwefsdc32sd23rASd23',
         ],
@@ -44,6 +47,7 @@ $config = [
             // 'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
+              ['class' => 'yii\rest\UrlRule', 'controller' => 'carriages'],
               ['class' => 'yii\rest\UrlRule', 'controller' => 'owners'],
             ],
         ],

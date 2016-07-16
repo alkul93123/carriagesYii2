@@ -29,7 +29,7 @@ class CarriagesController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['DELETE'],
                 ],
             ],
         ];
@@ -42,25 +42,14 @@ class CarriagesController extends Controller
     public function actionIndex()
     {
 
-        $carriages = CarriageModel::find()->all();
+        $carriages = CarriageModel::find()->with('owner')->asArray()->all();
+
 
         $response = Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $response->data = ['carriages'  => $carriages ];
 
         return $response;
-    }
-
-    /**
-     * Displays a single CarriageModel model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
     }
 
     /**
@@ -72,12 +61,31 @@ class CarriagesController extends Controller
     {
         $model = new CarriageModel();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $post = Yii::$app->request->post();
+
+
+        $response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+
+        if (CarriageModel::find()
+              ->where(['carriage_number' => $post['carriage_number']])->exists()) {
+          $response->statusCode = 400;
+          $response->data = ['error' => 'Вагон с таким id уже существует'];
+          return $response;
+        }
+
+        $carriage = array(
+            '_csrf'           => Yii::$app->request->headers->get('X-CSRF-Token'),
+            'CarriageModel'   => $post,
+        );
+
+        if ($model->load($carriage) && $model->save()) {
+            $response->statusCode = 201;
+            return $response;
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+          $response->statusCode = 400;
+          $response->data = ['error'  => 'Запись не добавлена'];
+          return $response;
         }
     }
 
@@ -91,12 +99,16 @@ class CarriagesController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $carriage = array(
+            '_csrf'           => Yii::$app->request->headers->get('X-CSRF-Token'),
+            'CarriageModel'   => Yii::$app->request->post(),
+        );
+
+        if ($model->load($carriage) && $model->save()) {
+          return Yii::$app->response->statusCode = 200;
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+          return Yii::$app->response->statusCode = 400;
+          // В приципе тут можно отловить ошибку, почему не обновились данные
         }
     }
 
@@ -110,7 +122,8 @@ class CarriagesController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return Yii::$app->response->statusCode = 200;
+
     }
 
     /**
